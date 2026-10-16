@@ -1,4 +1,3 @@
-import React from 'react'
 import { Advantages } from '../components/Advantages.tsx'
 import { Calculator } from '../components/Calculator.tsx'
 import { Footer } from '../components/Footer.tsx'
