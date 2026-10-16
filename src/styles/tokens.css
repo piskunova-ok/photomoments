@@ -1,0 +1,39 @@
+:root {
+  /* Палитра из ТЗ */
+  --color-milk: #faf8f5;
+  --color-beige: #ede5dd;
+  --color-graphite: #242329;
+  --color-violet: #7358b8;
+  --color-white: #ffffff;
+
+  /* Производные оттенки */
+  --color-violet-dark: #5c4499;
+  --color-violet-soft: #efeaf9;
+  --color-graphite-soft: #4a4850;
+  --color-muted: #6f6d76;
+  --color-line: #e6ded4;
+  --color-line-strong: #d8cec1;
+  --color-success: #2f7d54;
+  --color-error: #b8443a;
+
+  --font-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, sans-serif;
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+
+  --container: 1200px;
+  --gutter: clamp(1.25rem, 4vw, 2.5rem);
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(36, 35, 41, 0.05), 0 6px 16px rgba(36, 35, 41, 0.05);
+  --shadow-md: 0 12px 32px rgba(36, 35, 41, 0.1);
+  --shadow-lg: 0 24px 60px rgba(36, 35, 41, 0.14);
+
+  --transition: 200ms ease;
+  --space-section: clamp(3.5rem, 8vw, 7rem);
+
+  --focus-ring: 0 0 0 3px rgba(115, 88, 184, 0.35);
+}
