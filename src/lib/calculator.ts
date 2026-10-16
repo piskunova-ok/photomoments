@@ -89,6 +89,19 @@ export function validateQuantity(raw: string | number): QuantityValidation {
 }
 
 /**
+ * Проверяет, заполнены ли все обязательные параметры заказа:
+ * выбран формат, тип бумаги и введено корректное количество фотографий.
+ * Пока хотя бы один параметр не выбран, расчёт и передача в Форму недоступны.
+ */
+export function isOrderComplete(input: {
+  formatId: FormatId | null
+  paperId: PaperId | null
+  validation: QuantityValidation
+}): boolean {
+  return input.formatId !== null && input.paperId !== null && input.validation.valid
+}
+
+/**
  * Считает стоимость заказа.
  *
  * Формула:

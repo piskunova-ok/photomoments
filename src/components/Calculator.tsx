@@ -17,15 +17,19 @@ export function Calculator({ controller }: CalculatorProps) {
     quantityRaw,
     quantity,
     validation,
+    quantityTouched,
+    isComplete,
     result,
     setFormatId,
     setPaperId,
     setUrgent,
     setQuantityRaw,
     applyPreset,
+    markQuantityTouched,
   } = controller
 
-  const discountActive = result.discountPercent > 0
+  const showQuantityError = quantityTouched && !validation.valid
+  const discountActive = result !== null && result.discountPercent > 0
 
   return (
     <section className="section calculator" id="calculator">
@@ -110,7 +114,7 @@ export function Calculator({ controller }: CalculatorProps) {
                   autoComplete="off"
                   value={quantityRaw}
                   aria-describedby="calc-quantity-hint"
-                  aria-invalid={!validation.valid}
+                  aria-invalid={showQuantityError}
                   onChange={(event) => setQuantityRaw(event.target.value)}
                 />
                 <button
@@ -137,13 +141,13 @@ export function Calculator({ controller }: CalculatorProps) {
               </div>
 
               <p
-                className={`calc__hint ${validation.valid ? '' : 'calc__hint--error'}`}
+                className={`calc__hint ${showQuantityError ? 'calc__hint--error' : ''}`}
                 id="calc-quantity-hint"
-                role={validation.valid ? undefined : 'alert'}
+                role={showQuantityError ? 'alert' : undefined}
               >
-                {validation.valid
-                  ? `Скидка ${PRICING_RULES.discountPercent}% включится от ${PRICING_RULES.discountMinQuantity} фото. Введите число от ${QUANTITY_LIMITS.min} до ${QUANTITY_LIMITS.max.toLocaleString('ru-RU')}.`
-                  : validation.message}
+                {showQuantityError
+                  ? validation.message
+                  : `Скидка ${PRICING_RULES.discountPercent}% включится от ${PRICING_RULES.discountMinQuantity} фото. Введите число от ${QUANTITY_LIMITS.min} до ${QUANTITY_LIMITS.max.toLocaleString('ru-RU')}.`}
               </p>
             </fieldset>
 
@@ -181,53 +185,73 @@ export function Calculator({ controller }: CalculatorProps) {
           <aside className="calc__summary" aria-live="polite" aria-label="Итоговая стоимость">
             <div className="calc__summary-head">
               <h3 className="calc__summary-title">Ваш заказ</h3>
-              <p className="calc__summary-sub">
-                {formatRubles(result.unitPriceKopecks / 100)} за одно фото · {quantity} шт.
-              </p>
+              {result && (
+                <p className="calc__summary-sub">
+                  {formatRubles(result.unitPriceKopecks / 100)} за одно фото · {quantity} шт.
+                </p>
+              )}
             </div>
 
-            <dl className="calc__breakdown">
-              <div className="calc__row">
-                <dt>Цена за одну фотографию</dt>
-                <dd>{formatKopecks(result.unitPriceKopecks)}</dd>
-              </div>
-              <div className="calc__row">
-                <dt>
-                  Базовая стоимость
-                  <span className="calc__formula">
-                    {formatKopecks(result.unitPriceKopecks)} × {quantity}
-                  </span>
-                </dt>
-                <dd>{formatKopecks(result.baseCostKopecks)}</dd>
-              </div>
-              <div className={`calc__row ${discountActive ? 'calc__row--accent' : ''}`}>
-                <dt>
-                  Скидка {discountActive ? `${result.discountPercent}%` : `(от ${PRICING_RULES.discountMinQuantity} фото)`}
-                </dt>
-                <dd>{discountActive ? `− ${formatKopecks(result.discountKopecks)}` : '—'}</dd>
-              </div>
-              <div className="calc__row">
-                <dt>Стоимость после скидки</dt>
-                <dd>{formatKopecks(result.subtotalKopecks)}</dd>
-              </div>
-              <div className={`calc__row ${urgent ? 'calc__row--accent' : ''}`}>
-                <dt>Срочность {urgent ? `(+${result.urgentPercent}%)` : ''}</dt>
-                <dd>{urgent ? `+ ${formatKopecks(result.urgentSurchargeKopecks)}` : '—'}</dd>
-              </div>
-            </dl>
+            {result ? (
+              <>
+                <dl className="calc__breakdown">
+                  <div className="calc__row">
+                    <dt>Цена за одну фотографию</dt>
+                    <dd>{formatKopecks(result.unitPriceKopecks)}</dd>
+                  </div>
+                  <div className="calc__row">
+                    <dt>
+                      Базовая стоимость
+                      <span className="calc__formula">
+                        {formatKopecks(result.unitPriceKopecks)} × {quantity}
+                      </span>
+                    </dt>
+                    <dd>{formatKopecks(result.baseCostKopecks)}</dd>
+                  </div>
+                  <div className={`calc__row ${discountActive ? 'calc__row--accent' : ''}`}>
+                    <dt>
+                      Скидка {discountActive ? `${result.discountPercent}%` : `(от ${PRICING_RULES.discountMinQuantity} фото)`}
+                    </dt>
+                    <dd>{discountActive ? `− ${formatKopecks(result.discountKopecks)}` : '—'}</dd>
+                  </div>
+                  <div className="calc__row">
+                    <dt>Стоимость после скидки</dt>
+                    <dd>{formatKopecks(result.subtotalKopecks)}</dd>
+                  </div>
+                  <div className={`calc__row ${urgent ? 'calc__row--accent' : ''}`}>
+                    <dt>Срочность {urgent ? `(+${result.urgentPercent}%)` : ''}</dt>
+                    <dd>{urgent ? `+ ${formatKopecks(result.urgentSurchargeKopecks)}` : '—'}</dd>
+                  </div>
+                </dl>
 
-            <div className="calc__total">
-              <span className="calc__total-label">Итого</span>
-              <span className="calc__total-value">{formatKopecks(result.totalKopecks)}</span>
-            </div>
-            <p className="calc__average">
-              В среднем {formatKopecks(result.averagePerPhotoKopecks)} за фотографию
-            </p>
+                <div className="calc__total">
+                  <span className="calc__total-label">Итого</span>
+                  <span className="calc__total-value">{formatKopecks(result.totalKopecks)}</span>
+                </div>
+                <p className="calc__average">
+                  В среднем {formatKopecks(result.averagePerPhotoKopecks)} за фотографию
+                </p>
+              </>
+            ) : (
+              <p className="calc__placeholder">Выберите параметры заказа</p>
+            )}
 
-            <a className="btn btn--primary btn--block" href="#yandex-form">
-              <Icon name="form" />
-              <span>Перейти к оформлению</span>
-            </a>
+            {isComplete ? (
+              <a className="btn btn--primary btn--block" href="#yandex-form">
+                <Icon name="form" />
+                <span>Перейти к оформлению</span>
+              </a>
+            ) : (
+              <button
+                className="btn btn--primary btn--block"
+                type="button"
+                aria-disabled="true"
+                onClick={markQuantityTouched}
+              >
+                <Icon name="form" />
+                <span>Перейти к оформлению</span>
+              </button>
+            )}
             <p className="calc__summary-note">
               Параметры заказа подставятся в форму автоматически.
             </p>

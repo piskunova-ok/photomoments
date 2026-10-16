@@ -208,6 +208,18 @@ fieldset {
   width: 100%;
 }
 
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  opacity: 0.5;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.btn:disabled:hover,
+.btn[aria-disabled='true']:hover {
+  transform: none;
+}
+
 /* ---------- Чипы ---------- */
 
 .chip {

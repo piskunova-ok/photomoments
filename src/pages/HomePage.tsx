@@ -23,7 +23,10 @@ export default function HomePage() {
         <Advantages />
         <Formats />
         <Calculator controller={calculator} />
-        <YandexFormSlot payload={calculator.payload} />
+        <YandexFormSlot
+          payload={calculator.payload}
+          onIncompleteAttempt={calculator.markQuantityTouched}
+        />
         <HowToOrder />
         <PickupPoints />
       </main>

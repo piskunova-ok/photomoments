@@ -5,6 +5,7 @@ import {
   calculatePrice,
   formatKopecks,
   formatRubles,
+  isOrderComplete,
   validateQuantity,
 } from './calculator.ts'
 
@@ -110,6 +111,32 @@ test('валидация количества: границы и недопус�
   assert.equal(validateQuantity('abc').valid, false)
   assert.equal(validateQuantity('10001').valid, false)
   assert.equal(validateQuantity(Number.NaN).valid, false)
+})
+
+test('готовность заказа: нужны формат, бумага и корректное количество', () => {
+  const validQuantity = validateQuantity('10')
+
+  assert.equal(isOrderComplete({ formatId: null, paperId: null, validation: validQuantity }), false)
+  assert.equal(
+    isOrderComplete({ formatId: '10x15', paperId: null, validation: validQuantity }),
+    false,
+  )
+  assert.equal(
+    isOrderComplete({ formatId: null, paperId: 'glossy', validation: validQuantity }),
+    false,
+  )
+  assert.equal(
+    isOrderComplete({ formatId: '10x15', paperId: 'glossy', validation: validateQuantity('') }),
+    false,
+  )
+  assert.equal(
+    isOrderComplete({ formatId: '10x15', paperId: 'glossy', validation: validateQuantity('0') }),
+    false,
+  )
+  assert.equal(
+    isOrderComplete({ formatId: '10x15', paperId: 'glossy', validation: validQuantity }),
+    true,
+  )
 })
 
 test('форматирование денежных значений', () => {

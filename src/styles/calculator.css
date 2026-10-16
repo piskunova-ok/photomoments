@@ -279,6 +279,12 @@
   color: rgba(255, 255, 255, 0.55);
 }
 
+.calc__placeholder {
+  margin: 1.35rem 0;
+  font-size: 1.02rem;
+  color: rgba(255, 255, 255, 0.72);
+}
+
 .calc__summary .btn--primary {
   background: var(--color-violet);
   box-shadow: none;
@@ -286,6 +292,11 @@
 
 .calc__summary .btn--primary:hover {
   background: #8268cd;
+}
+
+.calc__summary .btn--primary[aria-disabled='true']:hover,
+.calc__summary .btn--primary:disabled:hover {
+  background: var(--color-violet);
 }
 
 .calc__summary-note {

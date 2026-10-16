@@ -10,9 +10,11 @@ import { useEffect, useMemo, useState } from 'react'
 
 interface YandexFormSlotProps {
   payload: CalculatorPayload | null
+  /** Вызывается при попытке оформления, когда параметры ещё не заполнены. */
+  onIncompleteAttempt?: () => void
 }
 
-export function YandexFormSlot({ payload }: YandexFormSlotProps) {
+export function YandexFormSlot({ payload, onIncompleteAttempt }: YandexFormSlotProps) {
   const configured = isYandexFormConfigured(YANDEX_FORM_CONFIG)
 
   const [isFormOpen, setIsFormOpen] = useState(false)
@@ -43,10 +45,10 @@ export function YandexFormSlot({ payload }: YandexFormSlotProps) {
     }
   }, [isFormOpen, hasPayloadChanged])
 
-  const quantityValid = payload !== null && Number.isFinite(payload.quantity) && payload.quantity >= 1
+  const canOrder = payload !== null
 
   const openForm = () => {
-    if (!payload || !quantityValid) return
+    if (!payload) return
     setFrozenPayload(payload)
     setIsFormOpen(true)
     setShowUpdatePrompt(false)
@@ -90,16 +92,16 @@ export function YandexFormSlot({ payload }: YandexFormSlotProps) {
               <>
                 {!isFormOpen ? (
                   <div className="form-slot__embed form-slot__embed--link">
-                    {!quantityValid && payload && (
-                      <p className="form-slot__note" role="alert" style={{ color: '#dc2626' }}>
-                        Укажите корректное количество фотографий для оформления заказа.
+                    {!canOrder && (
+                      <p className="form-slot__note">
+                        Сначала выберите формат, бумагу и количество фотографий в калькуляторе.
                       </p>
                     )}
                     <button
                       className="btn btn--primary"
                       type="button"
-                      onClick={openForm}
-                      disabled={!payload || !quantityValid}
+                      aria-disabled={!canOrder}
+                      onClick={canOrder ? openForm : onIncompleteAttempt}
                     >
                       <Icon name="form" />
                       <span>Оформить заказ</span>
