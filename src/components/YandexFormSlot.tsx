@@ -90,10 +90,6 @@ export function YandexFormSlot({ payload }: YandexFormSlotProps) {
               <>
                 {!isFormOpen ? (
                   <div className="form-slot__embed form-slot__embed--link">
-                    <p className="form-slot__text">
-                      Проверьте расчёт и нажмите «Оформить заказ», чтобы открыть встроенную Яндекс Форму
-                      с уже подставленной суммой.
-                    </p>
                     {!quantityValid && payload && (
                       <p className="form-slot__note" role="alert" style={{ color: '#dc2626' }}>
                         Укажите корректное количество фотографий для оформления заказа.
